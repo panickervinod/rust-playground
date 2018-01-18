@@ -84,58 +84,7 @@ perform tests on! Once fixed, you can choose to be credited here.
 
 ## Deployment
 
-### Amazon EC2 (Amazon Linux)
-
-Here's an example session. This could definitely be improved and
-automated.
-
-#### Dependencies (as root)
-
-```
-yum update -y
-yum install -y docker git
-
-# Use a production-quality storage driver that doesn't leak disk space
-vim /etc/sysconfig/docker
-# Add to OPTIONS: --storage-driver=overlay
-
-# Allow controlling the PID limit
-vim /etc/cgconfig.conf
-# Add:    pids       = /cgroup/pids;
-
-service docker start
-usermod -a -G docker ec2-user
-
-fallocate -l 1G /swap.fs
-chmod 0600 /swap.fs
-mkswap /swap.fs
-```
-
-#### Set aside disk space (as root)
-```
-fallocate -l 512M /playground.fs
-device=$(losetup -f --show /playground.fs)
-mkfs -t ext3 -m 1 -v $device
-mkdir /mnt/playground
-```
-
-#### Configure disk mountpoints (as root)
-```
-cat >>/etc/fstab <<EOF
-/swap.fs        none            swap   sw       0   0
-/playground.fs /mnt/playground  ext3   loop     0   0
-EOF
-```
-
-Reboot the instance at this point.
-
-#### Get the code
-```
-git clone https://github.com/integer32llc/rust-playground.git
-cd rust-playground
-```
-
-#### Get the code from the hard fork
+#### Get the code from the hard fork in the user home.
 ```
 git clone https://github.com/panickervinod/rust-playground.git
 cd rust-playground
@@ -155,7 +104,7 @@ crontab -e
 ```
 
 ```
-0 0 * * * cd /home/ec2-user/rust-playground/compiler && ./build.sh
+0 0 * * * cd /home/$USER/rust-playground/compiler && ./build.sh
 0 * * * * docker images -q --filter "dangling=true" | xargs docker rmi
 ```
 
