@@ -135,6 +135,12 @@ git clone https://github.com/integer32llc/rust-playground.git
 cd rust-playground
 ```
 
+#### Get the code from the hard fork
+```
+git clone https://github.com/panickervinod/rust-playground.git
+cd rust-playground
+```
+
 #### Build the containers
 ```
 cd compiler/
